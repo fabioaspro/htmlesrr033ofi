@@ -1,0 +1,109 @@
+<po-toolbar p-title="IMPRESSÃO DE PEDIDO (ESRR033B)"></po-toolbar>
+<div class="cabec" >
+    
+  <div class="selecao">
+        <form [formGroup]="formRel" >
+          <div class="campofiltros">
+              
+              <po-input #cPedIni class="po-md-12" (keyup.enter)="ChamaObterDadosRelPed()" formControlName="cPedIni" p-clean p-icon="bi bi-sort-down-alt" p-label="Pedido Inicial"         p-value="0"         p-mask="999999999"> </po-input>
+              <po-input #cPedFim class="po-md-12" (keyup.enter)="ChamaObterDadosRelPed()" formControlName="cPedFim" p-clean p-icon="bi bi-sort-up-alt"   p-label="Pedido Final"           p-value="999999999" p-mask="999999999"> </po-input>
+              <po-input #cUser   class="po-md-12" (keyup.enter)="ChamaObterDadosRelPed()" formControlName="cUser"   p-clean p-icon="bi bi-person-vcard"  p-label="Usuário de Implantação" p-value=""> </po-input>
+              
+              <po-button class="po-md-10" style='margin-top: 30px' p-tooltip="Buscar Dados" name='btBusca' [p-disabled]="lBotao"  p-icon="bi bi-check2-circle" p-kind="primary" (p-click)="ChamaObterDadosRelPed()" p-label="Buscar Dados" ></po-button>
+         </div>     
+        </form>
+    </div>
+    
+    <div class="campofiltrosc">
+        <po-button p-tooltip="Baixar Dados no Excel" p-icon="bi bi-download"     p-label="Baixar Excel"        (p-click)="onExportarExcel()" > </po-button>
+        <po-button p-tooltip="Envio de Reparos"      p-icon="bi bi-send-check"   p-label="Envio de Reparos"    (p-click)="onEnvio()" [p-disabled]="lPaleta"  p-kind="primary"> </po-button>
+        
+    </div>
+
+  </div>
+
+  <div style="display: flex;">
+      
+   
+        <div class="viewerRPD">
+
+              <po-table #ttDadosPed
+                      [p-items]="lista" 
+                      [p-columns]="colunasPed"
+                      [p-striped]="true"
+                      p-sort="true"
+                      [p-sort]="true"
+                      [p-hide-table-search]="true"
+                      [p-hide-columns-manager]="true"
+                      p-container="true"
+                      [p-literals]="customLiterals"
+                      [p-single-select]="false"
+                      [p-selectable]="true"
+                      (p-row-selected)="selecionarItem($event)"
+                      (p-selected)="selecionarItem($event)"
+                      [p-height]="alturaGrid"
+                      [p-loading]="loadTela"
+                      (p-show-more)="loadMoreItens()"
+                      [p-show-more-disabled]="disableShowMore">
+
+              <ng-template p-table-cell-template let-column="column" let-row="row">
+                  @if(column.property === 'opcao'){
+                      <div class="menuGrid">
+                      <div><button class="btn"  (click)="onAlterarGrid(row)"><p><i class="bi bi-eraser-fill"></i></p></button></div>
+                      </div>
+                  }
+              </ng-template>
+              </po-table>
+              <po-button p-tooltip="Imprimir Selecionado"  p-icon="bi bi-printer"      p-label="Imprimir Selecionado" (p-click)="ImprimirSelecionado()"             p-danger="false" > </po-button>
+
+              <p style="margin-top: 10px;"></p>
+              
+                <po-table [p-items]="listaArquivos" 
+                          [p-columns]="colunasArquivos" 
+                          [p-hide-table-search]="true"
+                          [p-hide-columns-manager]="true">
+
+                    <ng-template  p-table-column-template p-property="nomeArquivo" let-value>
+                      <btnDownload [nomeArquivo]="value"></btnDownload>
+                    </ng-template>
+                </po-table>             
+          
+        </div>
+
+  </div>
+
+  <po-modal #telaAdicionais p-size="100px" p-title="DADOS ADICIONAIS DO PEDIDO" >
+  
+    <form [formGroup]="formAdicionais">
+
+        <po-divider p-label="Observação"></po-divider>
+        
+        <po-textarea name="content"  formControlName="cObs"  class="po-md-12"> </po-textarea>
+
+        <br><br><br><br><br><br> 
+
+        <po-divider p-label="Prioridade do Pedido"></po-divider>
+        
+        <po-input class="po-lg-6" name="Hora"       p-label="Tipo de Pedido" p-readonly="true" formControlName="aux" (keyup.enter)="onOracle()"></po-input>
+        <po-input class="po-lg-6" name="Hora"       p-label="Ped.Cli."       p-readonly="true" formControlName="aux" (keyup.enter)="onOracle()"></po-input>
+        <po-input class="po-lg-6" name="Hora"       p-label="Fornecedor"     p-readonly="true" formControlName="aux" (keyup.enter)="onOracle()"></po-input>
+        <po-combo class="po-lg-6" name="Prioridade" p-label="Prioridade"                formControlName="cPrioridade" [p-options]="[{ value: 'D0' }, 
+                                                                                                                                   { value: 'D1' },
+                                                                                                                                   { value: 'D2' },
+                                                                                                                                   { value: 'D3' },
+                                                                                                                                   { value: 'D4' },
+                                                                                                                                   { value: 'D5' },
+                                                                                                                                   { value: 'D6' },
+                                                                                                                                   { value: 'D7' },
+                                                                                                                                   { value: 'D8' },
+                                                                                                                                   ]" (keyup.enter)="onOracle()" > </po-combo>
+
+    </form>
+
+    <po-modal-footer [p-disabled-align]="false">
+        <po-button p-label="true" p-label="Cancelar" (p-click)="FechartelaAdicionais()"> </po-button>
+        <po-button p-kind="primary" p-label="Confirmar" (p-click)="ChamaGerarPedido()"> </po-button>
+    </po-modal-footer>
+
+  
+</po-modal>

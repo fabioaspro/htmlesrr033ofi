@@ -1,0 +1,210 @@
+<po-toolbar p-title="ENVIO DE REPAROS (ESRR033)"></po-toolbar>
+<div class="cabec" >
+    <div class="tipoBusca">
+      <form [formGroup]="formEmit">
+        <po-lookup 
+                  class="po-md-12"
+                  name="codEmitente"
+                  formControlName="codEmitente"                            
+                  [p-filter-params]="{ codigoEmit: codigoEmitente }"
+                  p-label="Emitente"
+                  (p-virtual-scroll)="(true)"
+                  p-placeholder="Selecione um Emitente"
+                  changeVisibleColumns="['codEmitente', 'nomeAbrev']"
+                  [p-field-format]="['codEmitente', 'nomeAbrev']"
+                  [p-filter-service]="EmitenteService"                    
+                  [p-literals]="{ 'modalTitle': 'Zoom de Emitente' }"
+                  p-field-value="codEmitente"
+                  p-clean="true"                 
+                >
+        </po-lookup>
+      </form>
+  </div>
+  <div class="selecao">
+        <form [formGroup]="form" class="campofiltros">
+          <div class="campofiltros">
+              <po-radio-group style="min-width: 250px;"
+                        name="tpBusca" 
+                        formControlName="tpBusca" 
+                        [p-columns]=2 
+                        p-label="Tipo de Busca"
+                        [p-options]="[
+                          { label: 'Cod.Barras', value: 1},
+                          { label: 'Reparo', value: 2}
+                        ]"
+                        (p-change)="changeBusca($event)"
+                        (ngModelChange)="onChangetpBusca($event)"
+                        >
+                    </po-radio-group>
+
+              @if (this.mudaCampos === 1) {
+                <po-input #cScan class="po-md-12" p-placeholder="Leia o Código de Barras" (keyup.enter)="ChamaObterDadosReparo()" formControlName="cScan" p-clean p-icon="bi bi-upc-scan" p-label="Cod.Barras"> </po-input>
+              }
+              @else {
+                <po-input #cEstabel name="codEstabel" p-icon="bi bi-tools" p-auto-focus="true" formControlName="codEstabel" style="width: 100px;" p-label="Estab"  p-mask="xxx">      </po-input>
+                <po-input name="codFilial"  formControlName="codFilial"  style="width: 50px;"  p-label="Filial" p-mask="xx">       </po-input>
+                <po-input name="numRR"      formControlName="numRR"      style="width: 120px;" p-label="Reparo" p-mask=">>>>>>9.9" (keyup.enter)="ChamaObterDadosReparo()"></po-input>
+              }
+              <po-button style='margin-top: 30px' p-tooltip="Carregar Browser" name='btBusca' [p-disabled]="lBotao"  p-icon="bi bi-window-plus" p-kind="primary" (p-click)="ChamaObterDadosReparo()" p-label="Carregar" ></po-button>
+         </div>     
+        </form>
+    </div>
+    
+    <div class="campofiltrosc">
+        <po-button p-tooltip="Gerar Pedido"                        p-icon="bi bi-list-check"   p-label="Gerar Pedido"    (p-click)="this.onConcluir()" [p-disabled]="lPaleta"  p-kind="primary"> </po-button>
+        <po-button p-tooltip="Cancelar Geração"                    p-icon="bi bi-x-octagon"    p-label="Cancelar"        (p-click)="this.onCancelar()" [p-disabled]="lPaleta"  > </po-button>
+        <po-button p-tooltip="Imprimir Pedido (ESRR033B)"          p-icon="bi bi-printer"      p-label="Imprime Pedido"  (p-click)="ImprPed()" p-danger="false" > </po-button>
+        <po-button p-tooltip="Imprimir Etiqueta Serial (ESRR033D)" p-icon="bi bi-printer"      p-label="Etiqueta Serial" (p-click)="AbrirTelaTOTVS('esp/esrr033d.w')" p-danger="false" > </po-button>
+        <po-button p-tooltip="Faturamento (FT4001)"                p-icon="bi bi-building-add" p-label="Faturamento"     (p-click)="AbrirTelaTOTVS('ftp/ft4001.w')"   p-danger="true" > </po-button>
+        <po-button p-tooltip="Cancela Pedido de Reparo (ESRR034)"  p-icon="bi bi-trash"        p-label="Cancela Pedido"  (p-click)="AbrirTelaTOTVS('esp/esrr034.w')"  p-danger="true" > </po-button>
+
+    </div>
+
+  </div>
+
+  <div style="display: flex;">
+      
+        <div class="viewer">
+
+          <po-accordion #reparo p-allow-expand-all-items="true" p-show-manager-accordion="false">
+
+            <po-accordion-item #dreparo1 p-label="Dados do Reparo">
+              <form [formGroup]="formAltera" class="camporeparo">
+            
+                <div style="display: flex; justify-content: space-between;" class="titulo">            
+                  <po-input name="codEstabel" p-readonly="true" formControlName="codEstabel" style="width: 150px;" p-label="Estabelecimento"></po-input>
+                  <po-input name="codFilial"  p-readonly="true" formControlName="codFilial"  style="width: 150px;" p-label="Filial"></po-input>
+                  <po-input name="numRR"      p-readonly="true" formControlName="numRR"      style="width: 150px;" p-label="Reparo"></po-input>
+                  <po-input name="numSerieIt" p-readonly="true" formControlName="numSerieIt" style="width: 150px;" p-label="Série"></po-input>
+                </div>
+                <div style="display: flex; gap: 10px;">            
+                  <po-input name="itCodigo" p-readonly="true" formControlName="itCodigo"   style="width: 250px;" p-label="Item"     ></po-input>
+                  <po-input name="descItem" p-readonly="true" formControlName="descItem"   style="width: 680px;" p-label="Descrição"></po-input>
+                  <po-input name="Sit"      p-readonly="true" formControlName="Sit"        style="width: 120px;" p-label="Situacao" ></po-input>
+                </div>
+              </form>
+            </po-accordion-item>
+
+            <po-accordion-item #dreparo2 p-label="Detalhes">
+              <form [formGroup]="formAltera" class="camporeparo">
+
+                <div style="display: flex; justify-content: space-between;">            
+                  <po-input name="NumOS"   p-readonly="true" formControlName="NumOS"   style="width: 150px;" p-label="NumOS"  ></po-input>
+                  <po-input name="Chamado" p-readonly="true" formControlName="Chamado" style="width: 150px;" p-label="Chamado"></po-input>
+                  <po-input name="Lab"     p-readonly="true" formControlName="Lab"     style="width: 120px;" p-label="Laboratório"></po-input>
+                </div>
+                <div style="display: flex; justify-content: space-between;">            
+                  <po-input name="DataRecebe"  p-readonly="true" formControlName="DataRecebe"      style="width: 150px;" p-label="DataRecebe" ></po-input>
+                  <po-input name="HoraRecebe"  p-readonly="true" formControlName="HoraRecebe"      style="width: 150px;" p-label="HoraRecebe" p-mask="99:99"></po-input>
+                  <po-checkbox style="margin-top: 35px; " p-readonly="true" formControlName="Bloq" name="Bloq" p-label="Bloqueado"> </po-checkbox>
+                </div>
+                
+                <div style="display: flex; gap: 10px;">
+                  <po-textarea name="content" p-label="Obs" formControlName="Obs" [p-readonly]="true" class="po-md-12"> </po-textarea>
+                </div>               
+
+              </form>
+            </po-accordion-item>
+            <!--
+            <po-accordion-item #dreparo3 p-label="Último Pedido Gerado">
+                <po-info #ultPedGer name="ultPedGer" p-label="" [p-value]="ultimoPedido"> </po-info>
+            </po-accordion-item>
+            -->
+            <po-accordion-item #logArquivo p-label="Log de Arquivos">
+              <!--<po-widget *ngIf=" this.mostrarDados === false">    -->          
+              
+                <po-table [p-items]="listaArquivos" 
+                          [p-columns]="colunasArquivos" 
+                          [p-hide-table-search]="true"
+                          [p-hide-columns-manager]="true">
+
+                    <ng-template  p-table-column-template p-property="nomeArquivo" let-value>
+                      <btnDownload [nomeArquivo]="value"></btnDownload>
+                    </ng-template>
+                </po-table>             
+     
+            </po-accordion-item>
+
+          </po-accordion>
+
+        </div>
+
+        <div class="viewerRPD">          
+
+          <po-accordion #conclusao p-allow-expand-all-items="false" p-show-manager-accordion="false">
+
+            <po-accordion-item #dconclusao p-label="Zoom">
+
+              <po-table #ttDadosConc
+                      [p-items]="lista" 
+                      [p-columns]="colunas"
+                      [p-striped]="true"
+                      p-sort="true"
+                      [p-sort]="true"
+                      [p-hide-table-search]="true"
+                      [p-hide-columns-manager]="true"
+                      p-container="true"
+                      [p-literals]="customLiterals"
+                      [p-single-select]="true"
+                      [p-selectable]="true"
+                      (p-row-selected)="selecionarItem($event)"
+                      (p-selected)="selecionarItem($event)"
+                      [p-height]="alturaGrid"
+                      [p-loading]="loadTela">
+
+              <ng-template p-table-cell-template let-column="column" let-row="row">
+                  @if(column.property === 'opcao'){
+                      <div class="menuGrid">
+                      <div><button class="btn"  (click)="onAlterarGrid(row)"><p><i class="bi bi-eraser-fill"></i></p></button></div>
+                      </div>
+                  }
+              </ng-template>
+              </po-table>
+              <po-button p-tooltip="Excluir Selecionado"  p-icon="bi bi-trash"      p-label="Excluir Selecionado" (p-click)="ExcluirSelecionado()"             p-danger="true" > </po-button>
+
+              <p style="margin-top: -30px; font-size: 15px; font-weight: bold; text-align: right;">Reparos Incluídos: {{this.total}}</p>
+              <p style="margin-top: 10px;"></p>
+
+            </po-accordion-item>
+
+          </po-accordion>
+          
+        </div>
+
+  </div>
+
+  <po-modal #telaAdicionais p-size="100px" p-title="DADOS ADICIONAIS DO PEDIDO" >
+  
+    <form [formGroup]="formAdicionais">
+
+        <po-divider p-label="Observação"></po-divider>
+        
+        <po-textarea name="content"  formControlName="cObs"  class="po-md-12"> </po-textarea>
+
+        <br><br><br><br><br><br> 
+
+        <po-divider p-label="Prioridade do Pedido"></po-divider>
+        
+        <po-input class="po-lg-6" name="Hora"       p-label="Tipo de Pedido" p-readonly="true" formControlName="aux" (keyup.enter)="onOracle()"></po-input>
+        <po-input class="po-lg-6" name="Hora"       p-label="Ped.Cli."       p-readonly="true" formControlName="aux" (keyup.enter)="onOracle()"></po-input>
+        <po-input class="po-lg-6" name="Hora"       p-label="Fornecedor"     p-readonly="true" formControlName="aux" (keyup.enter)="onOracle()"></po-input>
+        <po-combo class="po-lg-6" name="Prioridade" p-label="Prioridade"                formControlName="cPrioridade" [p-options]="[{ value: 'D0' }, 
+                                                                                                                                   { value: 'D1' },
+                                                                                                                                   { value: 'D2' },
+                                                                                                                                   { value: 'D3' },
+                                                                                                                                   { value: 'D4' },
+                                                                                                                                   { value: 'D5' },
+                                                                                                                                   { value: 'D6' },
+                                                                                                                                   { value: 'D7' },
+                                                                                                                                   { value: 'D8' },
+                                                                                                                                   ]" (keyup.enter)="onOracle()" > </po-combo>
+
+    </form>
+
+    <po-modal-footer [p-disabled-align]="false">
+        <po-button p-label="true" p-label="Cancelar" (p-click)="FechartelaAdicionais()"> </po-button>
+        <po-button p-kind="primary" p-label="Confirmar" (p-click)="ChamaGerarPedido()"> </po-button>
+    </po-modal-footer>
+
+  
+</po-modal>

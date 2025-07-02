@@ -1,0 +1,142 @@
+.tipoBusca{
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 3px;
+    border: 1px solid gray; 
+    border-radius: 4px;
+    padding: 10px 0 10px 20px; 
+    height: 102px;
+    width: 30%;
+    background-color: whitesmoke;
+}
+
+.selecao{
+    flex-grow: 1;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 3px;
+    border: 1px solid gray; 
+    border-radius: 4px; 
+    padding:10px 0 10px 20px; 
+    height: 102px;
+    
+    background-color: whitesmoke;
+}
+
+.campofiltrosc{
+
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 3px;
+    border: 1px solid gray; 
+    border-radius: 4px; 
+    padding:10px; 
+    height: 100px;
+    width: 35%;
+    background-color: whitesmoke;
+    justify-content: center;
+}
+.campofiltros{
+
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-right: 15px;
+
+}
+
+
+
+.cabec{
+    display: flex; 
+    gap:10px;
+    justify-content: start; 
+    align-items: center; 
+    margin-top: 10px;
+    z-index: 99;
+}
+
+.grid{
+    border: 1px solid lightgray; 
+    border-radius: 4px; 
+    padding: 10px; 
+    margin-top: 1px;
+    margin-bottom: 1px;
+
+}
+
+::ng-deep .titulo input {
+    color: red !important;
+}
+
+
+.titulo-reparo {
+    position: absolute;
+    top: 268px;
+    left: 45px;
+    background: white;
+    color: #0088b9;
+    padding: 0 8px;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.viewer {
+
+    border: 1px solid lightgray; 
+    border-radius: 4px; 
+    padding: 30px; 
+    margin-top: 15px;
+    margin-right: 10px;
+    margin-bottom: 5px;
+    flex-direction: column;
+    gap: 10px;
+    width: 50%;
+}
+
+.titulo-rpd {
+    position: absolute;
+    
+    background: white;
+    color: #0088b9;
+    padding: 0 8px;
+    font-weight: bold;
+    font-size: 14px;
+    
+    margin-top: -40px;
+    margin-left: -15px;    
+        
+}
+.viewerRPD{
+    border: 1px solid lightgray; 
+    border-radius: 4px; 
+    padding: 30px; 
+    margin-top: 15px;
+    margin-right: 10px;
+    margin-bottom: 5px;
+    flex-direction: column;
+    gap: 30px;        
+    width: 50%;
+}
+
+.filtroAvancado{
+
+    display: flex;
+    flex-direction: column;
+    width: 500px;
+    margin-bottom: 10px;
+
+}
+
+::ng-deep .po-table td {
+    padding: 5px !important;
+}
+
+.viewer ::ng-deep .po-input {
+    height: 28px !important;
+    font-size: 13px;
+    padding: 4px 8px;
+}
+
+.viewerRPD ::ng-deep .po-input {
+    height: 28px !important;
+    font-size: 13px;
+    padding: 4px 8px;
+}
