@@ -355,12 +355,19 @@ export class TelaComponent {
 
   }
 
+  onEnter(event: Event){
+    event.preventDefault()
+    if (document.activeElement?.tagName === 'INPUT'){
+       this.ChamaObterDadosReparo()
+    }
+    else {}
+  }
   ChamaObterDadosReparo() {
 
     this.formAltera.reset()
     this.ultimoPedido = ""
     this.listaArquivos = []
-
+    
     //valida se foi selecionado o emitente
     if (!this.formEmit.get("codEmitente")?.value) {
       this.srvNotification.error("Emitente deve ser selecionado ! : " + this.formEmit.controls['codEmitente'].value)
@@ -397,7 +404,8 @@ export class TelaComponent {
     this.loadDadosItens = true
     this.lBotao = true
 
-    this.onChangetpBusca(0)
+    //fas comentado para nao dar erro dando enter no botão
+    //this.onChangetpBusca(0)
     // comentado para tratar certo o campo
     // this.mudaCampos = this.form.controls['tpBusca'].value
 
@@ -429,7 +437,7 @@ export class TelaComponent {
 
         this.dreparo1.expanded = true
         this.dreparo2.expanded = true
-        this.dreparo3.expanded = true
+        //this.dreparo3.expanded = true
         this.dconclusao.expanded = true
         this.logArquivo.expanded = true
       },

@@ -38,7 +38,7 @@
                     </po-radio-group>
 
               @if (this.mudaCampos === 1) {
-                <po-input #cScan class="po-md-12" p-placeholder="Leia o Código de Barras" (keyup.enter)="ChamaObterDadosReparo()" formControlName="cScan" p-clean p-icon="bi bi-upc-scan" p-label="Cod.Barras"> </po-input>
+                <po-input #cScan class="po-md-12" p-placeholder="Leia o Código de Barras" (keyup.enter)="onEnter($event)" formControlName="cScan" p-clean p-icon="bi bi-upc-scan" p-label="Cod.Barras"> </po-input>
               }
               @else {
                 <po-input #cEstabel name="codEstabel" p-icon="bi bi-tools" p-auto-focus="true" formControlName="codEstabel" style="width: 100px;" p-label="Estab"  p-mask="xxx">      </po-input>
@@ -46,17 +46,18 @@
                 <po-input name="numRR"      formControlName="numRR"      style="width: 120px;" p-label="Reparo" p-mask=">>>>>>9.9" (keyup.enter)="ChamaObterDadosReparo()"></po-input>
               }
               <po-button style='margin-top: 30px' p-tooltip="Carregar Browser" name='btBusca' [p-disabled]="lBotao"  p-icon="bi bi-window-plus" p-kind="primary" (p-click)="ChamaObterDadosReparo()" p-label="Carregar" ></po-button>
+              <po-button style='margin-top: 30px' p-tooltip="Gerar Pedido"                        p-icon="bi bi-list-check"      (p-click)="this.onConcluir()" [p-disabled]="lPaleta"  p-label="Gerar" p-kind="primary"> </po-button>
+              <po-button style='margin-top: 30px' p-tooltip="Cancelar Geração"                    p-icon="bi bi-x-octagon"       (p-click)="this.onCancelar()" [p-disabled]="lPaleta"  p-label="Cancelar"> </po-button>
+        
          </div>     
         </form>
     </div>
     
     <div class="campofiltrosc">
-        <po-button p-tooltip="Gerar Pedido"                        p-icon="bi bi-list-check"   p-label="Gerar Pedido"    (p-click)="this.onConcluir()" [p-disabled]="lPaleta"  p-kind="primary"> </po-button>
-        <po-button p-tooltip="Cancelar Geração"                    p-icon="bi bi-x-octagon"    p-label="Cancelar"        (p-click)="this.onCancelar()" [p-disabled]="lPaleta"  > </po-button>
-        <po-button p-tooltip="Imprimir Pedido (ESRR033B)"          p-icon="bi bi-printer"      p-label="Imprime Pedido"  (p-click)="ImprPed()" p-danger="false" > </po-button>
-        <po-button p-tooltip="Imprimir Etiqueta Serial (ESRR033D)" p-icon="bi bi-printer"      p-label="Etiqueta Serial" (p-click)="AbrirTelaTOTVS('esp/esrr033d.w')" p-danger="false" > </po-button>
-        <po-button p-tooltip="Faturamento (FT4001)"                p-icon="bi bi-building-add" p-label="Faturamento"     (p-click)="AbrirTelaTOTVS('ftp/ft4001.w')"   p-danger="true" > </po-button>
-        <po-button p-tooltip="Cancela Pedido de Reparo (ESRR034)"  p-icon="bi bi-trash"        p-label="Cancela Pedido"  (p-click)="AbrirTelaTOTVS('esp/esrr034.w')"  p-danger="true" > </po-button>
+        <po-button p-tooltip="Imprimir Pedido (ESRR033B)"          p-icon="bi bi-printer"        (p-click)="ImprPed()"                        p-danger="false" p-label="Pedido"> </po-button>
+        <po-button p-tooltip="Imprimir Etiqueta Serial (ESRR033D)" p-icon="bi bi-printer"        (p-click)="AbrirTelaTOTVS('esp/esrr033d.w')" p-danger="false" p-label="Etiq.Serial"> </po-button>
+        <po-button p-tooltip="Faturamento (FT4001)"                p-icon="bi bi-building-add"   (p-click)="AbrirTelaTOTVS('ftp/ft4001.w')"   p-danger="true"  p-label="Faturamento"> </po-button>
+        <po-button p-tooltip="Cancela Pedido de Reparo (ESRR034)"  p-icon="bi bi-trash"          (p-click)="AbrirTelaTOTVS('esp/esrr034.w')"  p-danger="true"  p-label="Cancelar Pedido"> </po-button>
 
     </div>
 
