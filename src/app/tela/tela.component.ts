@@ -49,6 +49,7 @@ export class TelaComponent {
 
   //Variaveis
   mensagemPedido: any[] = []
+  pedidosGerados: any[] = []
   ultimoPedido!: string
   listaEstabelecimentos: any[] = []
   placeHolderEstabelecimento!: string
@@ -409,7 +410,7 @@ export class TelaComponent {
     // comentado para tratar certo o campo
     // this.mudaCampos = this.form.controls['tpBusca'].value
 
-    let paramsTela: any = { codEmitente: this.formEmit.value, items: this.form.value }
+    let paramsTela: any = { codEmitente: this.formEmit.value, items: this.form.value, listaRep: this.lista }
 
     //console.log (paramsTela)
     //Chamar o servico
@@ -597,8 +598,8 @@ export class TelaComponent {
           this.loadTela = true
           this.mensagemPedido = data.items
           this.ultimoPedido = data.nrpedido
-          //console.log (this.mensagemPedido)
-          //console.log(this.ultimoPedido)
+          
+          this.pedidosGerados = data.pedGerados
 
         },
         error: (e: any) => {
@@ -618,7 +619,15 @@ export class TelaComponent {
           this.telaAdicionais.close()
           this.resetTela()
 
-          this.obterarq()
+          //Lista os Arquivos dos Pedidos Gerados  
+          this.listaArquivos = []
+    
+          //Arquivos Gerados
+          this.pedidosGerados.forEach((item) => { 
+            
+            this.obterarq(item["nrPedido"])
+
+          })
 
         }
       })
@@ -627,18 +636,18 @@ export class TelaComponent {
 
   }
 
-  public obterarq() {
+  public obterarq(numPed: string) {
 
-    this.listaArquivos = []
+    //Esta fazendo fora 
+    //this.listaArquivos = []
     
     //Arquivo Gerado
-    let paramsArq: any = { nrProcess: this.ultimoPedido, situacao: 'IPED' };
+    let paramsArq: any = { nrProcess: numPed, situacao: 'IPED' };
     this.srvTotvs.ObterArquivo(paramsArq).subscribe({
       next: (item: any) => {
-        //console.log(paramsArq)
-        //console.log("volta" , item)
-        this.listaArquivos = item?.items
-        //this.arquivoInfoOS = item.items[0].nomeArquivo;
+
+        this.listaArquivos = [...this.listaArquivos, ...item?.items]
+
       },
       error: (e: any) => {
         //mensagem pro usuario
@@ -646,6 +655,7 @@ export class TelaComponent {
       }
 
     })
+
   }
 
   getNomeCampo(campo: string) {
@@ -1171,7 +1181,7 @@ export class TelaComponent {
     /*
     this.desabilitaForm()
     let paramsTela: any = { items: this.form.value }
-    console.log(paramsTela)
+    //console.log(paramsTela)
     this.lista = []
 
      

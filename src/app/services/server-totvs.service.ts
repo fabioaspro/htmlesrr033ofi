@@ -44,6 +44,7 @@ export class ServerTotvsService {
       { property: 'desctpPed',        label: "Descrição"},
       { property: 'numSerieIt',       label: "Num.Série"},
       { property: 'termGarantia',     label: "Térm.Garantia"},
+      { property: 'decValOrc',        label: "Valor Orçado"}
     ];
   }
 

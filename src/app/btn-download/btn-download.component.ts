@@ -23,7 +23,7 @@ export class BtnDownloadComponent {
     this.srvTotvs46.ObterCadastro({ tabela: 'spool', codigo: '' }).subscribe({
       next: (response: any) => {
         this.urlSpool = response.desc
-        console.log(this.urlSpool, this.nomeArquivo)
+        //console.log(this.urlSpool, this.nomeArquivo)
       }
     })
   }

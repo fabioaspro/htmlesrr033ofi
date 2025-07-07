@@ -18,17 +18,17 @@ export class TecLabLookupService implements PoLookupFilter {
   _url = environment.totvs_url;
   
   getFilteredData(filter: string, page: number, pageSize: number): Observable<any> {
-    console.log(3)
+    //console.log(3)
     const url = this._url + `/ObterEmitente?filter=${filter}&page=${page}&pageSize=${pageSize}`
     return this.http.get(url, { headers: headersTotvs  }).pipe(take(1))
   }
 
   getFilteredItems(params: PoLookupFilteredItemsParams): Observable<any> {
-    console.log(params)
+    //console.log(params)
     const {filter, page, pageSize} = params
 
     const url = this._url + `/ObterEmitente?filter=${filter}&page=${page}&pageSize=${pageSize}`
-    console.log(url)
+    //console.log(url)
     return this.http.get<any>(url, {headers: headersTotvs }).pipe(take(1))
 
   }

@@ -890,7 +890,7 @@ export class TelaImprPedComponent {
 
     if (this.GridConclusao.getSelectedRows().length <= 0) {
        this.loadTela = false
-       console.log('selecione')
+       //console.log('selecione')
        return
     }
     
@@ -906,7 +906,7 @@ export class TelaImprPedComponent {
           let paramsArq: any = { nrProcess: item['nrPedido'], situacao: 'IPED' };
           this.srvTotvs.ObterArquivo(paramsArq).subscribe({
             next: (item: any) => {
-              console.log(paramsArq)
+              //console.log(paramsArq)
               this.listaArquivos = [...this.listaArquivos, ...item?.items]
               this.loadTela = false
             },
@@ -1263,7 +1263,7 @@ export class TelaImprPedComponent {
     /*
     this.desabilitaForm()
     let paramsTela: any = { items: this.form.value }
-    console.log(paramsTela)
+    //console.log(paramsTela)
     this.lista = []
 
      
