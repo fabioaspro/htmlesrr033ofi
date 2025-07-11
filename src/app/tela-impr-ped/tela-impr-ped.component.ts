@@ -1259,7 +1259,6 @@ export class TelaImprPedComponent {
     this.loadTela = true
     this.loadTela = false
 
-
     /*
     this.desabilitaForm()
     let paramsTela: any = { items: this.form.value }

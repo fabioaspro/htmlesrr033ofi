@@ -146,6 +146,21 @@ export class ServerTotvsService {
     return this.http.get(`${this._url2}/ObterCadastro`, {params:params, headers:headersTotvs}).pipe(take(1));
   }
 
+  //Chama Obter Filial
+  public ObterFilialOrigemold(params?: any){
+    return this.http.get(`${this._url2}/ObterFilialOrigem`, {params:params, headers:headersTotvs}).pipe(take(1));
+  }
+  
+  public ObterFilialOrigem(params?: any){
+    return this.http.get<any>(`${this._url}/ObterFilialOrigem`, {params: params, headers:headersTotvs}).pipe(
+                  map(item => { return item.items.map((item:any) =>  { return { label:item.codEstab + ' ' + item.nome, value: item.codEstab, codFilial: item.codFilial } }) }), take(1));
+  }
+
+  //Chama obter usuario
+  public ObterUsuario(params?: any){
+    return this.http.post(`${this._url}/ObterUsuario`, params, {headers:headersTotvs}).pipe(take(1))
+  }
+
   //---------------------- Obter Lista Completa
   public ObterArquivo(params?: any){
     return this.http.get(`${this._url2}/ObterArquivo`, {params:params, headers:headersTotvs}).pipe(take(1));

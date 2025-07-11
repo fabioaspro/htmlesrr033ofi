@@ -4,7 +4,7 @@ import { AfterViewInit, ChangeDetectorRef, Component, inject, OnInit, ViewChild,
 import { RouterOutlet, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { ReactiveFormsModule, FormsModule, FormBuilder, FormGroup, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
-import { PoModule, PoTableColumn, PoTableModule, PoButtonModule, PoMenuItem, PoMenuModule, PoModalModule, PoPageModule, PoToolbarModule, PoTableAction, PoModalAction, PoDialogService, PoNotificationService, PoFieldModule, PoDividerModule, PoTableLiterals, PoTableComponent, PoAccordionModule, PoUploadComponent, PoModalComponent, PoInputComponent, PoAccordionItemComponent, PoUploadLiterals, PoLookupColumn, } from '@po-ui/ng-components';
+import { PoModule, PoTableColumn, PoTableModule, PoButtonModule, PoMenuItem, PoMenuModule, PoModalModule, PoPageModule, PoToolbarModule, PoTableAction, PoModalAction, PoDialogService, PoNotificationService, PoFieldModule, PoDividerModule, PoTableLiterals, PoTableComponent, PoAccordionModule, PoUploadComponent, PoModalComponent, PoInputComponent, PoAccordionItemComponent, PoUploadLiterals, PoLookupColumn, PoLoadingModule } from '@po-ui/ng-components';
 import { ServerTotvsService } from '../services/server-totvs.service';
 import { ExcelService } from '../services/excel-service.service';
 //import { escape } from 'querystring';
@@ -56,18 +56,25 @@ export class TelaComponent {
   itemSelecionado: any = null
   lPendente: boolean = true
   lEnviado: boolean = true
+  
+  labelLoadGeral: string = ''
+  loadGeral: boolean = false
+
   labelLoadTela: string = ''
   loadTela: boolean = false
   loadDadosItens: boolean = false
   loadExcel: boolean = false
   mudaCampos!: number | null
   pesquisa!: string
-  lBotao: boolean = false
+  lBotao:  boolean = true
   lPaleta: boolean = true
-  alturaGrid: number = window.innerHeight - 500 //Grid de Zoom
+  lPaletaC:boolean = true
+  alturaGrid: number = window.innerHeight - 540 //Grid de Zoom
   objSelecionado: any
   lDisable: boolean = false
   total = 0
+  cFilialOrigem!: string
+  cNomeOrigem!: string
   EmitenteService = this.srvheader
   codigoEmitente!: number
 
@@ -130,6 +137,7 @@ export class TelaComponent {
   @ViewChild('cScan') cScanInput: PoInputComponent | undefined;
   @ViewChild('cEstabel') cEstabelInput: PoInputComponent | undefined;
   @ViewChild('dconclusao') dconclusao!: PoAccordionItemComponent;
+  @ViewChild('dreparo1') dreparo!: PoAccordionItemComponent;
   @ViewChild('dreparo2') dreparo2!: PoAccordionItemComponent;
   @ViewChild('dreparo3') dreparo3!: PoAccordionItemComponent;
   @ViewChild('logArquivo') logArquivo!: PoAccordionItemComponent;
@@ -197,9 +205,13 @@ export class TelaComponent {
     codEmitente: ['']
   });
 
+  public formOrig = this.formImport.group({
+    codOrigem: ['']
+  });
+
   public formAdicionais = this.formImport.group({
     cObs: [''],
-    cPrioridade: [''],
+    cPrioridade: ['D0'],
     aux: ['']
   })
 
@@ -261,19 +273,43 @@ export class TelaComponent {
   //CONCLUSAO DE REPARO
   ngOnInit(): void {
 
-    this.placeHolderEstabelecimento = 'Aguarde, carregando lista...'
-    this.srvTotvs.ObterEstabelecimentos().subscribe({
+    this.loadGeral      = false
+    this.labelLoadGeral = "Inicializando Dados"
+    
+    this.form.disable()
+    this.formEmit.get("codEmitente")?.disable()
+
+    this.srvTotvs.ObterUsuario().subscribe({
       next: (data: any) => {
-        this.listaEstabelecimentos = [];
-        this.listaEstabelecimentos = (data as any[]).sort(this.srvTotvs.ordenarCampos(['value']))
-        this.placeHolderEstabelecimento = 'Selecione um estabelecimento'
-        this.listaEstabelecimentos = data;
+        
+        let paramsUser: any = { cUsuario: data.cUsuario }
+        this.srvTotvs.ObterFilialOrigem(paramsUser).subscribe({
+          next: (data: any) => {
+            
+            this.listaEstabelecimentos = []
+            this.listaEstabelecimentos = (data as any[]).sort(this.srvTotvs.ordenarCampos(['value']))
+            this.placeHolderEstabelecimento = 'Selecione uma Filial de Origem'
+            this.listaEstabelecimentos = data
+            
+            this.loadGeral = true
+          },
+          error: (error: any) => {
+            this.loadGeral = true
+            this.srvNotification.error("Ocorreu um erro ao Obter Filial:" + error)
+
+          },
+          complete: () => { }
+        })
+        
       },
       error: (error: any) => {
-        this.srvNotification.error("Ocorreu um erro:" + error)
+        this.loadTela = false
+        this.srvNotification.error("Ocorreu um erro ao Obter Usuário:" + error)
+        this.form.disable()
+        this.formEmit.get("codEmitente")?.disable()
       },
       complete: () => { }
-    });
+    })    
 
     //Colunas do grid
     this.colunas = this.srvTotvs.obterColunasZoom()
@@ -288,6 +324,7 @@ export class TelaComponent {
     this.dconclusao1.expand()
 
     setTimeout(() => {
+      this.dreparo.expanded  = true
       this.dreparo2.expanded = true
       //this.dreparo3.expanded   = true
       this.dconclusao.expanded = true
@@ -296,6 +333,24 @@ export class TelaComponent {
 
     //this.arquivoInfoOS = item.items[0].nomeArquivo;
 
+  }
+
+  public onEmitenteChange (obj: string){
+    this.form.enable()
+    this.lBotao  = false
+    this.lPaleta = false
+  }
+
+  public onFilialOrigemChange (obj: string){
+
+    this.cFilialOrigem = obj
+    this.loadTela = false
+    
+    this.formEmit.get("codEmitente")?.enable()
+    
+    this.formOrig.get("codOrigem")?.disable()
+    this.form.disable()
+    this.lPaletaC = false //esse habilita/desabilita botão cancelar pedido
   }
 
   //Log de Arquivo
@@ -410,7 +465,7 @@ export class TelaComponent {
     // comentado para tratar certo o campo
     // this.mudaCampos = this.form.controls['tpBusca'].value
 
-    let paramsTela: any = { codEmitente: this.formEmit.value, items: this.form.value, listaRep: this.lista }
+    let paramsTela: any = { codEstabel: this.formOrig.value, codEmitente: this.formEmit.value, items: this.form.value, listaRep: this.lista }
 
     //console.log (paramsTela)
     //Chamar o servico
@@ -427,10 +482,19 @@ export class TelaComponent {
         this.total = this.lista.length //recalcula total incluídos
 
         this.listaItens = response.itensrpd
+        
+        if (response.zoom[0].termGarantia.trim() !== "") {
+          this.srvDialog.alert({
+            title: "ITEM em Garantia",
+            message: response.zoom[0].termGarantia
+          });
+        }
 
         //this.form.disable()
-        this.lBotao  = false //esse habilita/desabilita botão Carregar
-        this.lPaleta = false //esse habilita/desabilita botão gerar/cancelar pedido
+        this.lBotao   = false //esse habilita/desabilita botão Carregar
+        this.lPaleta  = false //esse habilita/desabilita botão gerar pedido
+        this.lPaletaC = false //esse habilita/desabilita botão cancelar pedido
+
         this.habilitaFormRPD()
 
         this.form.reset()
@@ -449,7 +513,8 @@ export class TelaComponent {
         this.loadTela = false
         this.loadDadosItens = false
         this.lBotao  = false //esse habilita/desabilita botão Carregar
-        this.lPaleta = false //esse habilita/desabilita botão gerar/cancelar pedido
+        this.lPaleta = false //esse habilita/desabilita botão  gerar pedido
+        this.lPaletaC = false //esse habilita/desabilita botão cancelar pedido
         this.desabilitaFormRPD()
         this.habilitaFormRPD()
          
@@ -521,20 +586,31 @@ export class TelaComponent {
 
   resetTela() {
     this.listaArquivos = []
+    this.lista         = []
+    this.listaItens    = []
+
+    this.lBotao   = true
+    this.lPaleta  = true
+    this.lPaletaC = true
+    
     this.formAltera.reset()
     this.form.reset()
-    this.formEmit.enable()
-    this.lista = []
-    this.listaItens = []
-    this.form.enable()
-    this.lBotao = false
-    this.lPaleta = true
+    
+    
+    
     this.mudaCampos = 1 //iniciar a variavel
     this.form.controls['tpBusca'].setValue(this.mudaCampos)
     this.onChangetpBusca(this.mudaCampos)
     this.formEmit.controls['codEmitente'].setValue("")
-    this.form.get("codEmitente")?.enable()
+    this.form.get("codEmitente")?.disable()
     this.total = this.lista.length //recalcula total incluídos
+    this.formOrig.controls['codOrigem'].setValue("")
+    this.formEmit.disable()
+    this.form.disable()
+
+    this.lPaletaC = true
+    this.formOrig.get("codOrigem")?.enable()
+    
   }
   onCancelar() {
 

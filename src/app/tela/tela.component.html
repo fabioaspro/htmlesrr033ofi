@@ -1,24 +1,22 @@
 <po-toolbar p-title="ENVIO DE REPAROS (ESRR033)"></po-toolbar>
+<po-loading-overlay [hidden]="loadGeral" [p-text]="labelLoadGeral"></po-loading-overlay>
 <div class="cabec" >
     <div class="tipoBusca">
-      <form [formGroup]="formEmit">
-        <po-lookup 
-                  class="po-md-12"
-                  name="codEmitente"
-                  formControlName="codEmitente"                            
-                  [p-filter-params]="{ codigoEmit: codigoEmitente }"
-                  p-label="Emitente"
-                  (p-virtual-scroll)="(true)"
-                  p-placeholder="Selecione um Emitente"
-                  changeVisibleColumns="['codEmitente', 'nomeAbrev']"
-                  [p-field-format]="['codEmitente', 'nomeAbrev']"
-                  [p-filter-service]="EmitenteService"                    
-                  [p-literals]="{ 'modalTitle': 'Zoom de Emitente' }"
-                  p-field-value="codEmitente"
-                  p-clean="true"                 
-                >
-        </po-lookup>
-      </form>
+      <form [formGroup]="formOrig">
+      <po-combo class="po-md-12" formControlName="codOrigem" name="ComboFilialOrigem" [p-options]="listaEstabelecimentos" p-icon="po-icon-manufacture"
+        p-label="Estabelecimento de Origem" (p-change)="onFilialOrigemChange($event)" p-placeholder="Selecione o Estab. de Origem">
+        <ng-template p-combo-option-template let-option>
+          <div class="po-row">
+      
+            <span class="po-icon po-icon-manufacture po-sm-2 po-md-3 po-lg-1"> </span>
+            <div class="po-sm-10 po-md-9 po-lg-11">
+              <div class="po-font-text-large-bold">{{ option.label }}</div>
+              <div class="po-font-text-smaller">Filial: {{ option.value }}</div>
+            </div>
+          </div>
+        </ng-template>
+      </po-combo>
+    </form>
   </div>
   <div class="selecao">
         <form [formGroup]="form" class="campofiltros">
@@ -47,7 +45,7 @@
               }
               <po-button style='margin-top: 30px' p-tooltip="Carregar Browser" name='btBusca' [p-disabled]="lBotao"  p-icon="bi bi-window-plus" p-kind="primary" (p-click)="ChamaObterDadosReparo()" p-label="Carregar" ></po-button>
               <po-button style='margin-top: 30px' p-tooltip="Gerar Pedido"                        p-icon="bi bi-list-check"      (p-click)="this.onConcluir()" [p-disabled]="lPaleta"  p-label="Gerar" p-kind="primary"> </po-button>
-              <po-button style='margin-top: 30px' p-tooltip="Cancelar Geração"                    p-icon="bi bi-x-octagon"       (p-click)="this.onCancelar()" [p-disabled]="lPaleta"  p-label="Cancelar"> </po-button>
+              <po-button style='margin-top: 30px' p-tooltip="Cancelar Geração"                    p-icon="bi bi-x-octagon"       (p-click)="this.onCancelar()" [p-disabled]="lPaletaC"  p-label="Cancelar"> </po-button>
         
          </div>     
         </form>
@@ -69,7 +67,31 @@
 
           <po-accordion #reparo p-allow-expand-all-items="true" p-show-manager-accordion="false">
 
-            <po-accordion-item #dreparo1 p-label="Dados do Reparo">
+            <po-accordion-item #Destino p-label="Destino do Reparo">
+
+              <form [formGroup]="formEmit">
+                <po-lookup 
+                          class="po-md-12"
+                          name="codEmitente"
+                          formControlName="codEmitente"                            
+                          [p-filter-params]="{ codigoEmit: codigoEmitente }"
+                          p-label="Emitente"
+                          (p-virtual-scroll)="(true)"
+                          p-placeholder="Selecione um Emitente"
+                          changeVisibleColumns="['codEmitente', 'nomeAbrev']"
+                          [p-field-format]="['codEmitente', 'nomeAbrev']"
+                          [p-filter-service]="EmitenteService"                    
+                          [p-literals]="{ 'modalTitle': 'Zoom de Emitente' }"
+                          p-field-value="codEmitente"
+                          p-clean="true"
+                          (p-change)="onEmitenteChange($event)"                
+                        >
+                </po-lookup>
+              </form>  
+
+            </po-accordion-item>
+
+            <po-accordion-item #dreparo1 p-label="Dados do Reparo Lido">
               <form [formGroup]="formAltera" class="camporeparo">
             
                 <div style="display: flex; justify-content: space-between;" class="titulo">            
@@ -111,21 +133,9 @@
                 <po-info #ultPedGer name="ultPedGer" p-label="" [p-value]="ultimoPedido"> </po-info>
             </po-accordion-item>
             -->
-            <po-accordion-item #logArquivo p-label="Log de Arquivos">
-              <!--<po-widget *ngIf=" this.mostrarDados === false">    -->          
-              
-                <po-table [p-items]="listaArquivos" 
-                          [p-columns]="colunasArquivos" 
-                          [p-hide-table-search]="true"
-                          [p-hide-columns-manager]="true">
 
-                    <ng-template  p-table-column-template p-property="nomeArquivo" let-value>
-                      <btnDownload [nomeArquivo]="value"></btnDownload>
-                    </ng-template>
-                </po-table>             
-     
-            </po-accordion-item>
-
+            
+          
           </po-accordion>
 
         </div>
@@ -167,9 +177,21 @@
               <p style="margin-top: 10px;"></p>
 
             </po-accordion-item>
+            <po-accordion-item #logArquivo p-label="Log de Arquivos">
+              <!--<po-widget *ngIf=" this.mostrarDados === false">    -->          
+              
+                <po-table [p-items]="listaArquivos" 
+                          [p-columns]="colunasArquivos" 
+                          [p-hide-table-search]="true"
+                          [p-hide-columns-manager]="true">
 
+                    <ng-template  p-table-column-template p-property="nomeArquivo" let-value>
+                      <btnDownload [nomeArquivo]="value"></btnDownload>
+                    </ng-template>
+                </po-table>             
+     
+            </po-accordion-item>
           </po-accordion>
-          
         </div>
 
   </div>
