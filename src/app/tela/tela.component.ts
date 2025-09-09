@@ -10,6 +10,7 @@ import { ExcelService } from '../services/excel-service.service';
 //import { escape } from 'querystring';
 import { TecLabLookupService } from '../services/header-lookup.service';
 import { BtnDownloadComponent } from '../btn-download/btn-download.component';
+import { AppComponent } from "../app.component";
 
 @Component({
   selector: 'app-tela',
@@ -29,8 +30,9 @@ import { BtnDownloadComponent } from '../btn-download/btn-download.component';
     PoToolbarModule,
     PoMenuModule,
     PoPageModule,
-    HttpClientModule
-  ],
+    HttpClientModule,
+    AppComponent
+],
   templateUrl: './tela.component.html',
   styleUrl: './tela.component.css'
 })
@@ -77,6 +79,8 @@ export class TelaComponent {
   cNomeOrigem!: string
   EmitenteService = this.srvheader
   codigoEmitente!: number
+
+  mensagem!: string
 
   //Controle do Log de Arquivos
   mostrarDados: boolean = false;
@@ -629,6 +633,8 @@ export class TelaComponent {
 
   onConcluir() {
 
+    this.onQtdReparos() //Retorna a quantidade de Reparos Incluídos    
+    
     //console.log(this.lista.length)
     if (this.lista.length === 0) {
       this.srvNotification.error('Nenhum reparo foi incluido')
@@ -641,7 +647,7 @@ export class TelaComponent {
         confirm: () => {
 
           this.telaAdicionais?.open()
-
+          this.formAdicionais.controls['cObs'].setValue("Incluídos: " + this.mensagem)
         },
         cancel: () => { }
       })
@@ -902,6 +908,23 @@ export class TelaComponent {
   selecionarItem(item: any) {
 
     this.itemSelecionado = item
+  }
+
+  onQtdReparos(){
+    const agrupado: { [tipo: string]: number } = {};
+ 
+    for (const item of this.lista) {
+      if (agrupado[item.tpPed]) {
+        agrupado[item.tpPed]++;
+      } else {
+        agrupado[item.tpPed] = 1;
+      }
+    }
+  
+    this.mensagem = Object.entries(agrupado)
+      .map(([tipo, quantidade]) => `Tipo ${tipo}: ${quantidade} Reparo(s)`)
+      .join(', ');
+
   }
 
   ExcluirSelecionado() {
@@ -1220,6 +1243,8 @@ export class TelaComponent {
     this.router.navigate(['form/' + obj.codEstabel])
 
   }
+
+  
 
   //---Deletar registro
   onDeletar(obj: any | null) {

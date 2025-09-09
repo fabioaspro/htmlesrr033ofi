@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { HttpClientModule, provideHttpClient, withInterceptorsFromDi} from '@angular/common/http';
-import { ChangeDetectorRef, Component, inject, OnInit, ViewChild, } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, inject, OnInit, ViewChild, } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { FormBuilder, FormGroup, UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
-import { PoDividerModule, PoModule, PoTableColumn, PoTableModule, PoButtonModule, PoMenuItem, PoMenuModule, PoModalModule, PoPageModule, PoToolbarModule, PoTableAction, PoTableComponent,} from '@po-ui/ng-components';
+import { PoDividerModule, PoModule, PoTableColumn, PoTableModule, PoButtonModule, PoMenuItem, PoMenuModule, PoModalModule, PoPageModule, PoToolbarModule, PoTableAction, PoTableComponent, PoThemeService, poThemeDefault, PoThemeTypeEnum,} from '@po-ui/ng-components';
 import { ServerTotvsService } from './services/server-totvs.service';
 
 
@@ -34,5 +34,10 @@ export class AppComponent {
 
   private onClick() {
     alert('Clicked in menu item');
+  }
+
+  constructor( private themeservives: PoThemeService){
+    //this.themeservives.setTheme(poThemeDefault, PoThemeTypeEnum.light) 
+    //this.themeservives.setThemeA11y
   }
 }

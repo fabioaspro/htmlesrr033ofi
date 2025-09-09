@@ -46,7 +46,7 @@
               <po-button style='margin-top: 30px' p-tooltip="Carregar Browser" name='btBusca' [p-disabled]="lBotao"  p-icon="bi bi-window-plus" p-kind="primary" (p-click)="ChamaObterDadosReparo()" p-label="Carregar" ></po-button>
               <po-button style='margin-top: 30px' p-tooltip="Gerar Pedido"                        p-icon="bi bi-list-check"      (p-click)="this.onConcluir()" [p-disabled]="lPaleta"  p-label="Gerar" p-kind="primary"> </po-button>
               <po-button style='margin-top: 30px' p-tooltip="Cancelar Geração"                    p-icon="bi bi-x-octagon"       (p-click)="this.onCancelar()" [p-disabled]="lPaletaC"  p-label="Cancelar"> </po-button>
-        
+
          </div>     
         </form>
     </div>
@@ -101,9 +101,11 @@
                   <po-input name="numSerieIt" p-readonly="true" formControlName="numSerieIt" style="width: 150px;" p-label="Série"></po-input>
                 </div>
                 <div style="display: flex; gap: 10px;">            
+               
                   <po-input name="itCodigo" p-readonly="true" formControlName="itCodigo"   style="width: 250px;" p-label="Item"     ></po-input>
                   <po-input name="descItem" p-readonly="true" formControlName="descItem"   style="width: 680px;" p-label="Descrição"></po-input>
                   <po-input name="Sit"      p-readonly="true" formControlName="Sit"        style="width: 120px;" p-label="Situacao" ></po-input>
+                  
                 </div>
               </form>
             </po-accordion-item>

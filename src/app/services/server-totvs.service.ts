@@ -185,6 +185,7 @@ export class ServerTotvsService {
   public ObterLeave(params?: any){
     return this.http.post(`${this._url}/ObterLeave`, params, {headers:headersTotvs}).pipe(take(1))
   }
+  
   //---------------------- Obter Lista Completa
   public ObterDadosReparo(params?: any){
     return this.http.post(`${this._url}/ObterDadosReparo`, params, {headers:headersTotvs}).pipe(take(1))
